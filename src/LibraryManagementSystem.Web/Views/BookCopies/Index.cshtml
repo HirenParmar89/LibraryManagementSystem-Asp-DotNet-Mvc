@@ -1,0 +1,89 @@
+@model LibraryManagementSystem.Web.ViewModels.BookCopy.BookCopyListViewModel
+@using LibraryManagementSystem.Domain.Enums
+@{
+    ViewData["Title"] = "Book Copies";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            Book Copies
+            @if (!string.IsNullOrEmpty(ViewBag.BookTitle))
+            {
+                <span class="text-muted">for @ViewBag.BookTitle</span>
+            }
+        </h1>
+        <a asp-action="Create" asp-route-bookId="@Model.FilterBookId" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add New Copy</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Accession No.</th>
+                            <th>Barcode</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Copies.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">No book copies found.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var copy in Model.Copies)
+                            {
+                                <tr>
+                                    <td>@copy.BookTitle</td>
+                                    <td>@copy.AccessionNumber</td>
+                                    <td>@copy.Barcode</td>
+                                    <td>@copy.Condition</td>
+                                    <td>
+                                        @switch (copy.Status)
+                                        {
+                                            case BookCopyStatus.Available:
+                                                <span class="badge bg-success">@copy.Status</span>
+                                                break;
+                                            case BookCopyStatus.Issued:
+                                                <span class="badge bg-primary">@copy.Status</span>
+                                                break;
+                                            case BookCopyStatus.Lost:
+                                                <span class="badge bg-danger">@copy.Status</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-warning text-dark">@copy.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@copy.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form asp-action="Delete" asp-route-id="@copy.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this copy?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

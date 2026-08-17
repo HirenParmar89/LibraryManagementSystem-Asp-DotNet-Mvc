@@ -1,0 +1,98 @@
+@model LibraryManagementSystem.Web.ViewModels.Loan.IssueBookViewModel
+@using LibraryManagementSystem.Application.DTOs
+@{
+    ViewData["Title"] = "Issue Book";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Issue Book</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form asp-action="Issue" method="post" id="issueForm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="MemberId" class="form-label">Select Member</label>
+                    <select asp-for="MemberId" class="form-select" asp-items="@(new SelectList(ViewBag.Members as IEnumerable<MemberDto>, "Id", "FirstName"))">
+                        <option value="">-- Select Member --</option>
+                    </select>
+                    <span asp-validation-for="MemberId" class="text-danger"></span>
+                </div>
+
+                <hr />
+                <h6 class="mb-3">Book Selection</h6>
+                
+                <!-- Hidden field to store the selected BookCopyId for form submission -->
+                <input type="hidden" asp-for="BookCopyId" id="BookCopyId" />
+
+                <div class="input-group mb-3">
+                    <input type="text" id="barcodeInput" class="form-control" placeholder="Scan or enter barcode..." />
+                    <button class="btn btn-outline-primary" type="button" id="fetchBookBtn"><i class="fas fa-search"></i> Fetch Book</button>
+                </div>
+
+                <!-- Display area for fetched book details -->
+                <div id="bookDetails" class="alert alert-light border d-none">
+                    <!-- Details will be injected here -->
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary" id="issueBtn" disabled><i class="fas fa-hand-holding me-1"></i> Issue Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.getElementById('fetchBookBtn').addEventListener('click', function() {
+            const barcode = document.getElementById('barcodeInput').value;
+            const bookDetailsDiv = document.getElementById('bookDetails');
+            const bookCopyIdInput = document.getElementById('BookCopyId');
+            const issueBtn = document.getElementById('issueBtn');
+
+            if (!barcode) {
+                bookDetailsDiv.className = 'alert alert-warning';
+                bookDetailsDiv.innerHTML = 'Please enter a barcode.';
+                bookDetailsDiv.classList.remove('d-none');
+                return;
+            }
+
+            bookDetailsDiv.className = 'alert alert-info';
+            bookDetailsDiv.innerHTML = 'Fetching book details...';
+            bookDetailsDiv.classList.remove('d-none');
+            issueBtn.disabled = true;
+
+            fetch(`/Loans/GetCopyByBarcode?barcode=${encodeURIComponent(barcode)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.isAvailable) {
+                            bookCopyIdInput.value = data.copyId;
+                            bookDetailsDiv.className = 'alert alert-success';
+                            bookDetailsDiv.innerHTML = `<strong>${data.bookTitle}</strong> <br> Status: ${data.status} <br> <small>Ready to issue.</small>`;
+                            issueBtn.disabled = false;
+                        } else {
+                            bookCopyIdInputInput.value = '';
+                            bookDetailsDiv.className = 'alert alert-danger';
+                            bookDetailsDiv.innerHTML = `<strong>${data.bookTitle}</strong> is currently not available (Status: ${data.status}).`;
+                        }
+                    } else {
+                        bookCopyIdInput.value = '';
+                        bookDetailsDiv.className = 'alert alert-danger';
+                        bookDetailsDiv.innerHTML = data.message || 'Book copy not found.';
+                    }
+                })
+                .catch(error => {
+                    bookCopyIdInput.value = '';
+                    bookDetailsDiv.className = 'alert alert-danger';
+                    bookDetailsDiv.innerHTML = 'An error occurred while fetching the book.';
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+}

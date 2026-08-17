@@ -1,0 +1,116 @@
+@model LibraryManagementSystem.Web.ViewModels.Book.BookListViewModel
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Book Catalog</h1>
+        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add New Book</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">All Books</h6>
+            <form asp-action="Index" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control bg-light border-0 small" placeholder="Search by title or ISBN..." value="@Model.SearchTerm" aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="booksTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Available</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Books.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No books found.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var book in Model.Books)
+                            {
+                                <tr>
+                                    <td>@book.ISBN</td>
+                                    <td>@book.Title</td>
+                                    <td>@book.AuthorName</td>
+                                    <td>@book.CategoryName</td>
+                                    <td>@book.AvailableCopies / @book.TotalCopies</td>
+                                    <td>
+                                        @if (book.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Inactive</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form asp-action="Delete" asp-route-id="@book.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to deactivate this book?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            @if (Model.TotalPages > 1)
+            {
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" asp-route-searchTerm="@Model.SearchTerm">Previous</a>
+                            </li>
+                        }
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@Model.SearchTerm">@i</a>
+                            </li>
+                        }
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" asp-route-searchTerm="@Model.SearchTerm">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>

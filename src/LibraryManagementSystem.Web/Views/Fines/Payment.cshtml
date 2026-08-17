@@ -1,0 +1,53 @@
+@model LibraryManagementSystem.Web.ViewModels.Fine.FinePaymentViewModel
+@using LibraryManagementSystem.Domain.Enums
+@{
+    ViewData["Title"] = "Record Payment";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Record Payment</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Member: @Model.MemberName</h5>
+                    <p>Total Amount: <strong>@Model.TotalAmount.ToString("C")</strong></p>
+                    <p>Already Paid: <strong>@Model.PaidAmount.ToString("C")</strong></p>
+                    <p>Remaining Balance: <strong class="text-danger">@Model.RemainingAmount.ToString("C")</strong></p>
+                </div>
+            </div>
+
+            <form asp-action="Payment" method="post">
+                <input type="hidden" asp-for="FineId" />
+                <input type="hidden" asp-for="MemberName" />
+                <input type="hidden" asp-for="TotalAmount" />
+                <input type="hidden" asp-for="PaidAmount" />
+                <input type="hidden" asp-for="RemainingAmount" />
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PaymentAmount" class="form-label"></label>
+                        <input asp-for="PaymentAmount" type="number" step="0.01" class="form-control" />
+                        <span asp-validation-for="PaymentAmount" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="PaymentMethod" class="form-label"></label>
+                        <select asp-for="PaymentMethod" class="form-select" asp-items="Html.GetEnumSelectList<PaymentMethod>()"></select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check me-1"></i> Record Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

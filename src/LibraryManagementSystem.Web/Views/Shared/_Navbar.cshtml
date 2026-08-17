@@ -1,0 +1,198 @@
+@using LibraryManagementSystem.Application.Interfaces.Services
+@using LibraryManagementSystem.Application.DTOs
+@using Microsoft.AspNetCore.Identity
+@using LibraryManagementSystem.Infrastructure.Identity
+@inject INotificationService NotificationService
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    int unreadCount = 0;
+    IEnumerable<NotificationDto> recentNotifications = new List<NotificationDto>();
+
+    if (User.Identity!.IsAuthenticated)
+    {
+        var userId = UserManager.GetUserId(User);
+        if (userId != null)
+        {
+            var countResult = await NotificationService.GetUnreadNotificationCountAsync(userId);
+            unreadCount = countResult.Data;
+            
+            var notifResult = await NotificationService.GetNotificationsForUserAsync(userId);
+            recentNotifications = notifResult.Data?.Take(5) ?? new List<NotificationDto>();
+        }
+    }
+}
+
+<style>
+    /* Glassmorphism Navbar Styling */
+    .navbar-glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .navbar-glass .nav-icon {
+        font-size: 1.25rem;
+        color: #2c3e50;
+        transition: all 0.2s ease;
+    }
+    .navbar-glass .nav-icon:hover {
+        transform: scale(1.15);
+        color: #3498db;
+    }
+    
+    .nav-bell-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transition: background 0.2s;
+    }
+    .nav-bell-wrapper:hover {
+        background: rgba(52, 152, 219, 0.1);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        font-size: 0.6rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .user-avatar-sm {
+        width: 36px;
+        height: 36px;
+        border: 2px solid #3498db;
+        transition: transform 0.2s;
+    }
+    .user-avatar-sm:hover {
+        transform: scale(1.05);
+    }
+
+    /* Mobile Search Toggle */
+    .mobile-search-bar {
+        display: none;
+    }
+    @@media (max-width: 768px) {
+        .desktop-search {
+            display: none !important;
+        }
+        .mobile-search-bar.show {
+            display: flex !important;
+            padding: 10px 15px;
+        }
+    }
+</style>
+
+<nav class="navbar-glass sticky-top">
+    <div class="container-fluid px-3 py-2">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="d-flex align-items-center gap-3 flex-grow-1">
+                <!-- Mobile Search Toggle Button -->
+                <button class="btn btn-link text-dark d-md-none p-0" id="mobile-search-toggle">
+                    <i class="fas fa-search fa-lg"></i>
+                </button>
+
+                <h5 class="mb-0 d-none d-lg-block fw-bold text-gray-800">@ViewData["Title"]</h5>
+
+                <!-- Desktop Search Bar -->
+                <form asp-controller="Search" asp-action="Index" method="get" class="desktop-search d-none d-md-flex ms-3 flex-grow-1" style="max-width: 400px;">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0 ps-3">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control bg-light border-0" placeholder="Search books, members..." name="term" aria-label="Search">
+                    </div>
+                </form>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3 gap-md-4">
+                <!-- Notification Bell -->
+                <div class="dropdown">
+                    <a href="#" class="nav-bell-wrapper" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell nav-icon"></i>
+                        @if (unreadCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                                @unreadCount
+                            </span>
+                        }
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="notificationDropdown" style="width: 320px; border-radius: 12px;">
+                        <h6 class="dropdown-header d-flex justify-content-between align-items-center fw-bold pt-3 pb-2">
+                            <span>Notifications</span>
+                            <a href="/Notifications" class="btn btn-sm btn-link p-0 text-primary">View All</a>
+                        </h6>
+                        <div class="dropdown-divider"></div>
+                        
+                        @if (!recentNotifications.Any())
+                        {
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-check-circle fa-2x mb-3 text-success"></i>
+                                <p class="mb-0">You're all caught up!</p>
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var notif in recentNotifications)
+                            {
+                                <a href="/Notifications" class="dropdown-item py-2 px-3 border-bottom @(notif.IsRead ? "" : "bg-light")">
+                                    <div class="d-flex justify-content-between">
+                                        <strong class="small text-dark">@notif.Title</strong>
+                                        <small class="text-muted">@notif.CreatedAt.ToString("MMM dd")</small>
+                                    </div>
+                                    <p class="small text-muted mb-0 text-truncate">@notif.Message</p>
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <!-- User Profile -->
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="gap: 8px;">
+                            <img src="https://ui-avatars.com/api/?name=@User.Identity.Name&background=3498db&color=fff" class="rounded-circle user-avatar-sm" alt="User Avatar">
+                            <span class="d-none d-md-inline fw-semibold small">@User.Identity.Name</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="userDropdown" style="border-radius: 12px; overflow: hidden;">
+                            <div class="px-3 py-2 bg-light border-bottom mb-2">
+                                <span class="d-block text-muted small">Signed in as</span>
+                                <span class="fw-bold text-dark">@User.Identity.Name</span>
+                            </div>
+                            <a class="dropdown-item py-2" href="/Profile"><i class="fas fa-user me-2 text-secondary"></i> Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="dropdown-item text-danger py-2"><i class="fas fa-sign-out-alt me-2"></i> Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a href="/Account/Login" class="btn btn-primary btn-sm px-3">Login</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Search Bar (Hidden by default) -->
+    <form asp-controller="Search" asp-action="Index" method="get" class="mobile-search-bar container-fluid" id="mobile-search-form">
+         <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search..." name="term" aria-label="Search">
+            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
+</nav>
+
+<script>
+    document.getElementById("mobile-search-toggle").addEventListener("click", function() {
+        document.getElementById("mobile-search-form").classList.toggle("show");
+    });
+</script>

@@ -1,0 +1,138 @@
+<div class="sidebar" id="sidebar-wrapper">
+    <style>
+        /* Modern Sidebar Styling */
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-brand {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(236, 240, 241, 0.7);
+            border-radius: 0;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar .nav-link i {
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar .nav-link:hover i {
+            transform: scale(1.15);
+            color: #3498db;
+        }
+
+        /* Active Link Glowing Effect */
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.2) 0%, transparent 100%);
+            border-left: 4px solid #3498db;
+        }
+
+        .sidebar .nav-link.active i {
+            color: #3498db;
+        }
+
+        .sidebar .nav-section {
+            color: rgba(236, 240, 241, 0.35);
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Custom Dark Scrollbar for Sidebar */
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+
+    <div class="sidebar-brand">
+        <i class="fas fa-book-reader me-2 text-primary"></i> Library MS
+    </div>
+
+    <div class="list-group list-group-flush sidebar-nav">
+        <div class="nav-section">Main</div>
+        <a href="/Dashboard" class="nav-link"><i class="fas fa-tachometer-alt fa-fw me-2"></i> Dashboard</a>
+        
+        <div class="nav-section">Catalog</div>
+        <a href="/Books" class="nav-link"><i class="fas fa-book fa-fw me-2"></i> Books</a>
+        <a href="/BookCopies" class="nav-link"><i class="fas fa-barcode fa-fw me-2"></i> Book Copies</a>
+        <a href="/Authors" class="nav-link"><i class="fas fa-user-edit fa-fw me-2"></i> Authors</a>
+        <a href="/Categories" class="nav-link"><i class="fas fa-tags fa-fw me-2"></i> Categories</a>
+        <a href="/Publishers" class="nav-link"><i class="fas fa-building fa-fw me-2"></i> Publishers</a>
+        
+        <div class="nav-section">Circulation</div>
+        <a href="/Loans/Issue" class="nav-link"><i class="fas fa-hand-holding fa-fw me-2"></i> Issue Book</a>
+        <a href="/Loans" class="nav-link"><i class="fas fa-list fa-fw me-2"></i> Active Loans</a>
+        <a href="/Loans/History" class="nav-link"><i class="fas fa-history fa-fw me-2"></i> Loan History</a>
+        
+        <div class="nav-section">Members</div>
+        <a href="/Members" class="nav-link"><i class="fas fa-users fa-fw me-2"></i> Members</a>
+        
+        <div class="nav-section">Reservations</div>
+        <a href="/Reservations" class="nav-link"><i class="fas fa-bookmark fa-fw me-2"></i> Reservations</a>
+        
+        <div class="nav-section">Fines</div>
+        <a href="/Fines" class="nav-link"><i class="fas fa-dollar-sign fa-fw me-2"></i> Fines</a>
+        
+        <div class="nav-section">Reports</div>
+        <a href="/Reports" class="nav-link"><i class="fas fa-chart-line fa-fw me-2"></i> Overview</a>
+        <a href="/Reports/Circulation" class="nav-link"><i class="fas fa-exchange-alt fa-fw me-2"></i> Circulation</a>
+        <a href="/Reports/Inventory" class="nav-link"><i class="fas fa-book fa-fw me-2"></i> Inventory</a>
+        <a href="/Reports/Members" class="nav-link"><i class="fas fa-users fa-fw me-2"></i> Members</a>
+        <a href="/Reports/Fines" class="nav-link"><i class="fas fa-dollar-sign fa-fw me-2"></i> Fines</a>
+
+        <div class="nav-section">Notifications</div>
+        <a href="/Notifications" class="nav-link"><i class="fas fa-bell fa-fw me-2"></i> Notifications</a>
+
+        <div class="nav-section">Administration</div>
+        <a href="/Settings" class="nav-link"><i class="fas fa-cog fa-fw me-2"></i> Settings</a>
+        <a href="/Users" class="nav-link"><i class="fas fa-users-cog fa-fw me-2"></i> User Management</a>
+        <a href="/AuditLogs" class="nav-link"><i class="fas fa-history fa-fw me-2"></i> Audit Logs</a>
+
+        <div class="nav-section mt-auto">Account</div>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+            <button type="submit" class="nav-link btn btn-link text-start w-100"><i class="fas fa-sign-out-alt fa-fw me-2 text-danger"></i> Logout</button>
+        </form>
+    </div>
+</div>
+
+<!-- Script to highlight active menu -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var currentPath = window.location.pathname.toLowerCase();
+        var links = document.querySelectorAll('.sidebar .nav-link');
+        
+        links.forEach(function(link) {
+            var linkPath = link.getAttribute('href') ? link.getAttribute('href').toLowerCase() : '';
+            // Exact match for root, or starts with for sub-routes (e.g., /Books/Details/1)
+            if (linkPath === currentPath || (linkPath !== '/' && currentPath.startsWith(linkPath))) {
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

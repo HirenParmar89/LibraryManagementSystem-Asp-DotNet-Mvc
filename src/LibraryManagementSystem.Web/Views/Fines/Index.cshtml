@@ -1,0 +1,89 @@
+@model LibraryManagementSystem.Web.ViewModels.Fine.FineListViewModel
+@using LibraryManagementSystem.Domain.Enums
+@{
+    ViewData["Title"] = "Fines";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Fines</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Member</th>
+                            <th>Amount</th>
+                            <th>Paid</th>
+                            <th>Remaining</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Fines.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">No fines found.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var fine in Model.Fines)
+                            {
+                                <tr>
+                                    <td>@fine.MemberName</td>
+                                    <td>@fine.Amount.ToString("C")</td>
+                                    <td>@fine.PaidAmount.ToString("C")</td>
+                                    <td>@fine.RemainingAmount.ToString("C")</td>
+                                    <td>
+                                        @switch (fine.PaymentStatus)
+                                        {
+                                            case FinePaymentStatus.Pending:
+                                                <span class="badge bg-danger">@fine.PaymentStatus</span>
+                                                break;
+                                            case FinePaymentStatus.PartiallyPaid:
+                                                <span class="badge bg-warning text-dark">@fine.PaymentStatus</span>
+                                                break;
+                                            case FinePaymentStatus.Paid:
+                                                <span class="badge bg-success">@fine.PaymentStatus</span>
+                                                break;
+                                            case FinePaymentStatus.Waived:
+                                                <span class="badge bg-secondary">@fine.PaymentStatus</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>@fine.FineDate.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        @if (fine.PaymentStatus == FinePaymentStatus.Pending || fine.PaymentStatus == FinePaymentStatus.PartiallyPaid)
+                                        {
+                                            <a asp-action="Payment" asp-route-id="@fine.Id" class="btn btn-success btn-sm"><i class="fas fa-cash-register"></i> Pay</a>
+                                            <form asp-action="Waive" asp-route-id="@fine.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to waive this fine?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-times"></i> Waive</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

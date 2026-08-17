@@ -1,0 +1,199 @@
+:root {
+    --sidebar-width: 250px;
+    --sidebar-bg: #2c3e50;
+    --sidebar-hover: #34495e;
+    --sidebar-text: #ecf0f1;
+    --sidebar-active: #3498db;
+    --navbar-height: 60px;
+    --navbar-bg: #ffffff;
+    --content-bg: #f4f6f9;
+}
+
+body {
+    background-color: var(--content-bg);
+    overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh; /* Changed from min-height to height */
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: all 0.3s ease-in-out;
+    overflow-y: auto; /* This allows the sidebar to scroll internally */
+    overflow-x: hidden;
+}
+
+.sidebar .sidebar-brand {
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar .nav-link {
+    color: var(--sidebar-text);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid transparent;
+    transition: all 0.2s;
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--sidebar-hover);
+    color: white;
+}
+
+.sidebar .nav-link.active {
+    background-color: var(--sidebar-active);
+    color: white;
+    border-left-color: #ffffff;
+}
+
+.sidebar .nav-section {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: rgba(236, 240, 241, 0.5);
+    padding: 15px 20px 5px;
+    margin-top: 10px;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.top-navbar {
+    height: var(--navbar-height);
+    background-color: var(--navbar-bg);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.content-wrapper {
+    padding: 20px;
+    flex-grow: 1;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Mobile Toggle */
+.sidebar-toggle {
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        margin-left: -var(--sidebar-width);
+    }
+    .sidebar.active {
+        margin-left: 0;
+    }
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* ========================================= */
+/* Final UI/UX Polishing (Phase 38)          */
+/* ========================================= */
+
+/* Smooth transitions for cards */
+.card {
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.12) !important;
+}
+
+/* Button hover effects */
+.btn {
+    transition: all 0.2s ease;
+    border-radius: 0.35rem;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+/* Page Fade-in Animation */
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Table Hover */
+.table-hover tbody tr {
+    transition: background-color 0.1s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,0.02) !important;
+}
+
+/* Better focus states for accessibility */
+.form-control:focus, .form-select:focus {
+    border-color: var(--sidebar-active);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+/* Badge styling */
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+    border-radius: 0.25rem;
+}

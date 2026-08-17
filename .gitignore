@@ -1,0 +1,74 @@
+## .NET Core / ASP.NET Core
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio
+.vs/
+*.lock.json
+*.nuget.props
+*.nuget.targets
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+TestResult.xml
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+# Logs
+logs/
+*.log
+
+# Runtime files
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+*.pfx
+*.pem
+*.key
+
+# Database files
+*.mdf
+*.ldf
+*.ndf
+
+# Uploaded files (if saved locally)
+src/LibraryManagementSystem.Web/wwwroot/uploads/books/*
+src/LibraryManagementSystem.Web/wwwroot/uploads/members/*
+src/LibraryManagementSystem.Web/wwwroot/uploads/logo/*
+!src/LibraryManagementSystem.Web/wwwroot/uploads/books/.keep
+!src/LibraryManagementSystem.Web/wwwroot/uploads/members/.keep
+!src/LibraryManagementSystem.Web/wwwroot/uploads/logo/.keep

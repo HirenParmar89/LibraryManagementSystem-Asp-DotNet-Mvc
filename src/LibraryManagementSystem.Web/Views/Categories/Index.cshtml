@@ -1,0 +1,70 @@
+@model LibraryManagementSystem.Web.ViewModels.Category.CategoryListViewModel
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Categories</h1>
+        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add New Category</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">All Categories</h6>
+            <form asp-action="Index" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control bg-light border-0 small" placeholder="Search by name..." value="@Model.SearchTerm" aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit"><i class="fas fa-search fa-sm"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Categories.Any())
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center text-muted py-4">No categories found.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var category in Model.Categories)
+                            {
+                                <tr>
+                                    <td>@category.Name</td>
+                                    <td>
+                                        <a asp-action="Details" asp-route-id="@category.Id" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                        <form asp-action="Delete" asp-route-id="@category.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to deactivate this category?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

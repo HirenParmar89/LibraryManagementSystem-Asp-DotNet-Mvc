@@ -1,0 +1,99 @@
+@model LibraryManagementSystem.Application.DTOs.SearchResultDto
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Search Results for "@ViewBag.SearchTerm"</h1>
+
+    <div class="row">
+        <!-- Books Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold"><i class="fas fa-book me-2"></i>Books</h6>
+                    <span class="badge bg-light text-primary">@Model.Books.Count()</span>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Books.Any())
+                    {
+                        <p class="text-muted">No books found.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var book in Model.Books)
+                            {
+                                <li class="list-group-item">
+                                    <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id" class="text-dark text-decoration-none">
+                                        <strong>@book.Title</strong> 
+                                        <span class="text-muted small">by @book.AuthorName</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Members Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold"><i class="fas fa-users me-2"></i>Members</h6>
+                    <span class="badge bg-light text-success">@Model.Members.Count()</span>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Members.Any())
+                    {
+                        <p class="text-muted">No members found.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var member in Model.Members)
+                            {
+                                <li class="list-group-item">
+                                    <a asp-controller="Members" asp-action="Details" asp-route-id="@member.Id" class="text-dark text-decoration-none">
+                                        <strong>@member.FirstName @member.LastName</strong> 
+                                        <span class="text-muted small">(@member.MembershipNumber)</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Authors Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold"><i class="fas fa-user-edit me-2"></i>Authors</h6>
+                    <span class="badge bg-light text-info">@Model.Authors.Count()</span>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Authors.Any())
+                    {
+                        <p class="text-muted">No authors found.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var author in Model.Authors)
+                            {
+                                <li class="list-group-item">
+                                    <a asp-controller="Authors" asp-action="Details" asp-route-id="@author.Id" class="text-dark text-decoration-none">
+                                        <strong>@author.FirstName @author.LastName</strong>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

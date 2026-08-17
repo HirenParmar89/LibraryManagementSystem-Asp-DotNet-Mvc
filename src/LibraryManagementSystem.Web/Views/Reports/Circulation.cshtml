@@ -1,0 +1,70 @@
+@model IEnumerable<LibraryManagementSystem.Application.DTOs.CirculationReportDto>
+@{
+    ViewData["Title"] = "Circulation Report";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Circulation Report</h1>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-outline-secondary"><i class="fas fa-print"></i> Print</button>
+            <a asp-action="ExportCirculation" asp-route-startDate="@ViewBag.StartDate" asp-route-endDate="@ViewBag.EndDate" class="btn btn-success"><i class="fas fa-file-excel"></i> Export Excel</a>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <form asp-action="Circulation" method="get" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="form-label mb-0">Start Date:</label>
+                    <input type="date" name="startDate" value="@ViewBag.StartDate" class="form-control" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label mb-0">End Date:</label>
+                    <input type="date" name="endDate" value="@ViewBag.EndDate" class="form-control" />
+                </div>
+                <div class="col-auto align-self-end">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Member</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Return Date</th>
+                            <th>Status</th>
+                            <th>Fine</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr><td colspan="7" class="text-center text-muted py-4">No data found for selected dates.</td></tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.BookTitle</td>
+                                    <td>@item.MemberName</td>
+                                    <td>@item.IssueDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.DueDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@(item.ReturnDate.HasValue ? item.ReturnDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
+                                    <td>@item.Status</td>
+                                    <td>@item.FineAmount.ToString("C")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

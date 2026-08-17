@@ -1,0 +1,24 @@
+@model LibraryManagementSystem.Web.ViewModels.Category.CategoryDetailsViewModel
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Category Details</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4 class="card-title mb-3">@Model.Category.Name</h4>
+            <hr />
+            
+            <div class="row mb-2">
+                <div class="col-sm-3"><strong>Category ID:</strong></div>
+                <div class="col-sm-9">@Model.Category.Id</div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a asp-action="Edit" asp-route-id="@Model.Category.Id" class="btn btn-warning"><i class="fas fa-edit me-1"></i> Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+@model LibraryManagementSystem.Web.ViewModels.Reservation.ReservationListViewModel
+@using LibraryManagementSystem.Domain.Enums
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Reservations</h1>
+        <a asp-action="Create" class="btn btn-primary"><i class="fas fa-plus me-1"></i> New Reservation</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Book Title</th>
+                            <th>Member</th>
+                            <th>Reservation Date</th>
+                            <th>Queue Position</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Reservations.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">No reservations found.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var res in Model.Reservations)
+                            {
+                                <tr>
+                                    <td>@res.BookTitle</td>
+                                    <td>@res.MemberName</td>
+                                    <td>@res.ReservationDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@res.QueuePosition</td>
+                                    <td>
+                                        @switch (res.Status)
+                                        {
+                                            case ReservationStatus.Pending:
+                                                <span class="badge bg-info text-dark">@res.Status</span>
+                                                break;
+                                            case ReservationStatus.Ready:
+                                                <span class="badge bg-success">@res.Status</span>
+                                                break;
+                                            case ReservationStatus.Completed:
+                                                <span class="badge bg-primary">@res.Status</span>
+                                                break;
+                                            case ReservationStatus.Cancelled:
+                                                <span class="badge bg-secondary">@res.Status</span>
+                                                break;
+                                            case ReservationStatus.Expired:
+                                                <span class="badge bg-danger">@res.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (res.Status == ReservationStatus.Pending || res.Status == ReservationStatus.Ready)
+                                        {
+                                            <form asp-action="Fulfill" asp-route-id="@res.Id" method="post" class="d-inline" onsubmit="return confirm('Mark this reservation as fulfilled (book issued)?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-success btn-sm" title="Fulfill"><i class="fas fa-check"></i></button>
+                                            </form>
+                                            <form asp-action="Cancel" asp-route-id="@res.Id" method="post" class="d-inline" onsubmit="return confirm('Cancel this reservation?');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger btn-sm" title="Cancel"><i class="fas fa-times"></i></button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

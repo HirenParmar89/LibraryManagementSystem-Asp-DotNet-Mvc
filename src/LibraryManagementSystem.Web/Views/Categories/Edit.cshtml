@@ -1,0 +1,49 @@
+@model LibraryManagementSystem.Web.ViewModels.Category.CategoryFormViewModel
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Edit Category</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ParentCategoryId" class="form-label"></label>
+                    <select asp-for="ParentCategoryId" class="form-select" asp-items="@(new SelectList(Model.ParentCategories, "Id", "Name"))">
+                        <option value="">-- None (Top Level) --</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

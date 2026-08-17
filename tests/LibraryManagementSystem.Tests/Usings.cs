@@ -1,0 +1,17 @@
+global using Xunit;
+global using Moq;
+global using FluentAssertions;
+global using LibraryManagementSystem.Application.Common;
+global using LibraryManagementSystem.Application.DTOs;
+global using LibraryManagementSystem.Application.Interfaces;
+global using LibraryManagementSystem.Application.Interfaces.Repositories;
+global using LibraryManagementSystem.Application.Interfaces.Services;
+global using LibraryManagementSystem.Application.Options;
+global using LibraryManagementSystem.Application.Services;
+global using LibraryManagementSystem.Domain.Entities;
+global using LibraryManagementSystem.Domain.Enums;
+global using Microsoft.Extensions.Options;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading.Tasks;
